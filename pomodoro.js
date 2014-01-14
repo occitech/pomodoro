@@ -15,6 +15,9 @@ Pomodoro.prototype.running = function() {
 };
 
 Pomodoro.prototype.start = function() {
+	if (this.running()) {
+		throw new Error('Cannot start pomodoro already running');
+	}
 	this._started = true;
 
 	this._tickInterval = setInterval(
@@ -31,10 +34,16 @@ Pomodoro.prototype.tick = function() {
 };
 
 Pomodoro.prototype.stop = function() {
-	this._started = false;
+	if (this.running()) {
+		this._started = false;
+		this.emit('stopped', this);
+	}
 }
 
 Pomodoro.prototype.interrupt = function() {
+    if (!this.running()) {
+        throw new Error('Cannot stop pomodoro already stopped');
+    }
 	this._started = false;
 	clearInterval(this._tickInterval);
 	this.emit('interrupted', this);

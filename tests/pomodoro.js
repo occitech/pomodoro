@@ -44,8 +44,8 @@ describe('Pomodoro', function() {
 		it('should pass the pomodoro instance when emitting the started event', function() {
 			expect(startListener).to.have.been.calledWith(subject);
 		});
-		xit('should throw Exception if already running', function() {
-			// TODO expect(startListener).to.have.been.calledWith(subject);
+		it('should throw Exception if already running', function() {
+			expect(subject.start.bind(subject)).to.throw('Cannot start pomodoro already running');
 		});
 	});
 
@@ -56,21 +56,29 @@ describe('Pomodoro', function() {
 		beforeEach(function () {
 			clock = sinon.useFakeTimers();
 			tickListener = sinon.spy();
+			stopListener = sinon.spy();
 			subject.on('ticked', tickListener);
+			subject.on('stopped', stopListener);
 			subject.start();
 		});
 		afterEach(function() {
 			clock.restore();
 			tickListener.reset();
+			stopListener.reset();
 		});
 
 		it('should be stopped after 25 minutes', function(){
 			clock.tick(25*1000 + 1);
 			expect(subject.running()).to.be.false;
 		});
-		xit('should emit stopped event after 25 minutes', function(){
-			// clock.tick(5*1000);
-			// expect(tickListener.callCount).to.be.equal(5);
+		it('should emit stopped event after 25 minutes', function(){
+			 clock.tick(25*1000);
+			expect(stopListener.callCount).to.have.been.call;
+		});
+
+		it('should pass the pomodoro instance when emitting the stopped event', function(){
+			 clock.tick(25*1000);
+			expect(stopListener).to.have.been.calledWith(subject);
 		});
 
 		it('should emit ticked event every minute', function(){
@@ -92,9 +100,11 @@ describe('Pomodoro', function() {
 			clock = sinon.useFakeTimers();
 			interruptListener = sinon.spy();
 			tickListener = sinon.spy();
+			stopListener = sinon.spy();
 
 			subject.on('ticked', tickListener);
 			subject.on('interrupted', interruptListener);
+			subject.on('stopped', stopListener);
 
 			subject.start();
 			subject.interrupt();
@@ -103,6 +113,7 @@ describe('Pomodoro', function() {
 			clock.restore();
 			interruptListener.reset();
 			tickListener.reset();
+			stopListener.reset();
 		});
 
 		it('should be stopped', function(){
@@ -118,11 +129,12 @@ describe('Pomodoro', function() {
 			clock.tick(5 * 1000);
 			expect(tickListener).to.not.have.been.called;
 		});
-		xit('should not emit stopped event after 25 minutes', function(){
-			expect(tickListener.callCount).to.be.equal(5);
+		it('should not emit stopped event after 25 minutes', function(){
+			clock.tick(25 * 1000);
+			expect(stopListener).to.not.have.been.called;
 		});
-		xit('should throw Exception if not running', function() {
-			// TODO expect(startListener).to.have.been.calledWith(subject);
+		it('should throw Exception if already stopped', function() {
+			expect(subject.interrupt.bind(subject)).to.throw('Cannot stop pomodoro already stopped');
 		});
 	});
 });
