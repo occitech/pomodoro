@@ -4,7 +4,8 @@
   "description": "Pomodoro timer",
   "main": "pomodoro.js",
   "scripts": {
-    "test": "mocha tests/ --reporter spec -C"
+    "test": "mocha tests/ --reporter spec -C",
+    "build": "browserify public/js/main.js -o public/js/app.js"
   },
   "author": "",
   "license": "MIT",
@@ -13,5 +14,8 @@
     "mocha": "~1.16.2",
     "sinon": "~1.7.3",
     "sinon-chai": "~2.4.0"
+  },
+  "dependencies": {
+    "angular": "~1.2.10"
   }
 }

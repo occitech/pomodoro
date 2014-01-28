@@ -1,0 +1,18 @@
+<html ng-app="pomodoro">
+<head>
+	<meta charset="UTF-8">
+	<title>Pomodoro Web App</title>
+	<script src="js/app.js"></script>
+</head>
+<body>
+	<div ng-controller="PomodoroCtrl">
+		<div class="countdown">
+			<h1>{{ remainingMinutes() }}:{{ remainingSeconds }}</h1>
+		</div>
+		<div class="actions">
+			<button class="start" ng-click="start()" ng-hide="pomodoro.running()">start</button>
+			<button class="interrupt" ng-click="stop()" ng-show="pomodoro.running()">interrupt</button>
+		</div>
+	</div>
+</body>
+</html>
