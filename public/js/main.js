@@ -9,27 +9,28 @@ angular.module('pomodoro', [])
 		var pomodoro = new Pomodoro(1, 2, 1),
 			remainingSeconds = 0;
 
-		$scope.remainingSeconds = 0;
 		$scope.pomodoro = pomodoro;
 
-		$scope.pomodoro.on('ticked', function() {
-			remainingSeconds -= 1;
-			$scope.remainingSeconds = remainingSeconds % 60;
-			console.log(remainingSeconds, $scope.remainingSeconds);
+		pomodoro.on('ticked', function() {
+			$scope.$apply(function() {
+				remainingSeconds -= 1;
+			});
 		});
-		$scope.pomodoro.on('started', function() {
+
+		pomodoro.on('started', function() {
 			remainingSeconds = 1 * 60;
 		});
 
-		$scope.start = function() {
-			pomodoro.start();
-		};
-		$scope.interrupt = function() {
-			pomodoro.interrupt();
-		}
+		pomodoro.on('stopped', function() {
+			$scope.$apply(function() {
+				remainingSeconds = 0;
+			});
+		});
+
 		$scope.remainingMinutes = function() {
 			return parseInt(remainingSeconds / 60);
 		}
-
-		$scope.remainingSeconds =  0;
+		$scope.remainingSeconds = function() {
+			return remainingSeconds % 60;
+		}
 	}]);

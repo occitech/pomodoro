@@ -7,11 +7,13 @@
 <body>
 	<div ng-controller="PomodoroCtrl">
 		<div class="countdown">
-			<h1>{{ remainingMinutes() }}:{{ remainingSeconds }}</h1>
+			<h1>{{ remainingMinutes() }}:{{ remainingSeconds() }}</h1>
 		</div>
+
+		<h3 ng-show="pomodoro.resting()">Yay resting</h3>
 		<div class="actions">
-			<button class="start" ng-click="start()" ng-hide="pomodoro.running()">start</button>
-			<button class="interrupt" ng-click="stop()" ng-show="pomodoro.running()">interrupt</button>
+			<button class="start" ng-click="pomodoro.start()" ng-hide="pomodoro.running()">start</button>
+			<button class="interrupt" ng-click="pomodoro.interrupt()" ng-show="pomodoro.running()">interrupt</button>
 		</div>
 	</div>
 </body>
