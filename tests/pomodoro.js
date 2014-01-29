@@ -85,7 +85,10 @@ describe('Pomodoro', function() {
 			clock.tick(25 * MINUTE_IN_MS);
 			expect(stopListener).to.have.been.calledWith(subject);
 		});
-
+		it('should not emit ticked event after stopped event emitted', function(){
+			clock.tick(26 * MINUTE_IN_MS);
+			expect(tickListener.callCount).to.be.equal(25);
+		});
 		it('should emit ticked event every minute', function(){
 			clock.tick(5 * MINUTE_IN_MS);
 			expect(tickListener.callCount).to.be.equal(5);

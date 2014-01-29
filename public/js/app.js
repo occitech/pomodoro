@@ -266,6 +266,7 @@ function stop() {
 	if (this.running()) {
 		this._started = false;
 		this._resting = true;
+		clearInterval(this._tickInterval);
 		this.emit('stopped', this);
 		setTimeout(finishRest.bind(this), this.config.rest_duration_ms);
 	}
@@ -273,6 +274,7 @@ function stop() {
 
 function finishRest() {
 	this._resting = false;
+	clearInterval(this._tickInterval);
 	this.emit('restEnded', this);
 }
 
@@ -285,32 +287,36 @@ angular.module('pomodoro', [])
 		return Pomodoro;
 	}])
 	.controller('PomodoroCtrl', ['$scope', 'Pomodoro', function($scope, Pomodoro) {
-		var pomodoro = new Pomodoro(1, 2, 1),
+		var pomodoro = new Pomodoro(0.1, 0.1, 1),
 			remainingSeconds = 0;
 
-		$scope.remainingSeconds = 0;
 		$scope.pomodoro = pomodoro;
 
-		$scope.pomodoro.on('ticked', function() {
-			remainingSeconds -= 1;
-			$scope.remainingSeconds = remainingSeconds % 60;
-			console.log(remainingSeconds, $scope.remainingSeconds);
+		pomodoro.on('ticked', function() {
+			$scope.$apply(function() {
+				remainingSeconds -= 1;
+			});
 		});
-		$scope.pomodoro.on('started', function() {
+
+		pomodoro.on('started', function() {
 			remainingSeconds = 1 * 60;
 		});
 
-		$scope.start = function() {
-			pomodoro.start();
-		};
-		$scope.interrupt = function() {
-			pomodoro.interrupt();
-		}
+		pomodoro.on('stopped', function() {
+			$scope.$apply(function() {
+				remainingSeconds = 0;
+			});
+		});
+
+		pomodoro.on('restEnded', function() {
+			alert('au boulot !');
+		});
 		$scope.remainingMinutes = function() {
 			return parseInt(remainingSeconds / 60);
 		}
-
-		$scope.remainingSeconds =  0;
+		$scope.remainingSeconds = function() {
+			return remainingSeconds % 60;
+		}
 	}]);
 },{"./../../pomodoro":3,"angular":1}],5:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.

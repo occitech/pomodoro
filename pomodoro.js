@@ -56,6 +56,7 @@ function stop() {
 	if (this.running()) {
 		this._started = false;
 		this._resting = true;
+		clearInterval(this._tickInterval);
 		this.emit('stopped', this);
 		setTimeout(finishRest.bind(this), this.config.rest_duration_ms);
 	}
@@ -63,5 +64,6 @@ function stop() {
 
 function finishRest() {
 	this._resting = false;
+	clearInterval(this._tickInterval);
 	this.emit('restEnded', this);
 }
