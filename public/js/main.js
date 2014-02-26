@@ -1,5 +1,13 @@
 var Pomodoro = require('./../../pomodoro');
+var io = require('socket.io-client');
+var socket = io.connect('http://localhost:1337');
+
 require('angular');
+
+socket.on('news', function (data) {
+	console.log(data);
+	socket.emit('my other event', { my: 'data' });
+});
 
 angular.module('pomodoro', [])
 	.factory('Pomodoro', [function() {

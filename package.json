@@ -13,7 +13,10 @@
     "chai": "~1.8.1",
     "mocha": "~1.16.2",
     "sinon": "~1.7.3",
-    "sinon-chai": "~2.4.0"
+    "sinon-chai": "~2.4.0",
+    "socket.io": "~0.9.16",
+    "node-static": "~0.7.3",
+    "socket.io-client": "~0.9.16"
   },
   "dependencies": {
     "angular": "~1.2.10"
