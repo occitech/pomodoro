@@ -1,57 +1,61 @@
-var Pomodoro = require('./../../pomodoro');
 var io = require('socket.io-client');
 var socket = io.connect('http://localhost:1337');
 
 require('angular');
 
-socket.on('news', function (data) {
-	console.log(data);
-	socket.emit('my other event', { my: 'data' });
-});
-
 angular.module('pomodoro', [])
-	.factory('Pomodoro', [function() {
-		return Pomodoro;
+	.service('pomodoro', ['$rootScope', function($rootScope) {
+		var config = {};
+		var callbacks = {};
+		var pomodoro = null;
+		var remainingSeconds = 0;
+
+		function updateRemainingTime(remaining) {
+			console.log('remaining updated ', remaining);
+			$rootScope.$apply(function() {
+				remainingSeconds = remaining;
+			})
+		}
+
+		socket.on('new Pomodoro', function (data) {
+			console.log(data);
+			config = data.config;
+			pomodoro = data.pomodoro;
+		});
+
+		['started', 'ticked', 'stopped'].forEach(function(eventName) {
+			socket.on(eventName, updateRemainingTime);
+		});
+
+		return {
+			config: function() {
+				return config;
+			},
+			remainingSeconds: function() {
+				return remainingSeconds;
+			},
+			start: function() {
+				console.log('pomodoro start requested');
+				socket.emit('start', {});
+			},
+			on: function(eventName, cb) {
+				socket.on(eventName, cb);
+				console.log('callback registered on ', eventName);
+			}
+		}
 	}])
-	.controller('PomodoroCtrl', ['$scope', 'Pomodoro', function($scope, Pomodoro) {
-		var pomodoro,
-			remainingSeconds = 0;
-
-		$scope.configuration = {
-			duration_in_minutes: 25,
-			rest_in_minutes: 5
-		};
-		pomodoro = new Pomodoro(
-			$scope.configuration.duration_in_minutes,
-			$scope.configuration.rest_in_minutes,
-			1 // seconds
-		);
+	.controller('PomodoroCtrl', ['$scope', 'pomodoro', function($scope, pomodoro) {
+		$scope.configuration = pomodoro.config;
 		$scope.pomodoro = pomodoro;
-
-		pomodoro.on('ticked', function() {
-			$scope.$apply(function() {
-				remainingSeconds -= 1;
-			});
-		});
-
-		pomodoro.on('started', function() {
-			remainingSeconds = $scope.configuration.duration_in_minutes * 60;
-		});
 
 		pomodoro.on('restEnded', function() {
 			alert('Au boulot !');
 		});
 
-		pomodoro.on('stopped', function() {
-			$scope.$apply(function() {
-				remainingSeconds = 0;
-			});
-		});
-
 		$scope.remainingMinutes = function() {
-			return parseInt(remainingSeconds / 60);
-		}
+			return parseInt(pomodoro.remainingSeconds() / 60);
+		};
 		$scope.remainingSeconds = function() {
-			return remainingSeconds % 60;
-		}
+			return pomodoro.remainingSeconds() % 60;
+		};
 	}]);

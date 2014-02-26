@@ -7,8 +7,8 @@
 <body>
 	<div ng-controller="PomodoroCtrl">
 		<p>
-			The pomodoro will last <strong>{{ configuration.duration_in_minutes }}</strong> minutes
-			with a <strong>{{ configuration.rest_in_minutes }}</strong> minutes break!
+			The pomodoro will last <strong>{{ configuration().duration_in_minutes }}</strong> minutes
+			with a <strong>{{ configuration().rest_in_minutes }}</strong> minutes break!
 		</p>
 		<div class="countdown">
 			<h1>{{ remainingMinutes() }}:{{ remainingSeconds() }}</h1>
