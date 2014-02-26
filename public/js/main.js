@@ -6,9 +6,18 @@ angular.module('pomodoro', [])
 		return Pomodoro;
 	}])
 	.controller('PomodoroCtrl', ['$scope', 'Pomodoro', function($scope, Pomodoro) {
-		var pomodoro = new Pomodoro(1, 2, 1),
+		var pomodoro,
 			remainingSeconds = 0;
 
+		$scope.configuration = {
+			duration_in_minutes: 25,
+			rest_in_minutes: 5
+		};
+		pomodoro = new Pomodoro(
+			$scope.configuration.duration_in_minutes,
+			$scope.configuration.rest_in_minutes,
+			1 // seconds
+		);
 		$scope.pomodoro = pomodoro;
 
 		pomodoro.on('ticked', function() {
@@ -18,7 +27,11 @@ angular.module('pomodoro', [])
 		});
 
 		pomodoro.on('started', function() {
-			remainingSeconds = 1 * 60;
+			remainingSeconds = $scope.configuration.duration_in_minutes * 60;
+		});
+
+		pomodoro.on('restEnded', function() {
+			alert('Au boulot !');
 		});
 
 		pomodoro.on('stopped', function() {
