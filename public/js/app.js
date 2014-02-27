@@ -4095,14 +4095,12 @@ angular.module('pomodoro', [])
 		var remainingSeconds = 0;
 
 		function updateRemainingTime(remaining) {
-			console.log('remaining updated ', remaining);
 			$rootScope.$apply(function() {
 				remainingSeconds = remaining;
 			})
 		}
 
 		socket.on('new Pomodoro', function (data) {
-			console.log(data);
 			config = data.config;
 			pomodoro = data.pomodoro;
 		});
@@ -4119,12 +4117,10 @@ angular.module('pomodoro', [])
 				return remainingSeconds;
 			},
 			start: function() {
-				console.log('pomodoro start requested');
 				socket.emit('start', {});
 			},
 			on: function(eventName, cb) {
 				socket.on(eventName, cb);
-				console.log('callback registered on ', eventName);
 			}
 		}
 	}])
@@ -4135,6 +4131,8 @@ angular.module('pomodoro', [])
 		pomodoro.on('restEnded', function() {
 			alert('Au boulot !');
 		});
+
+		console.log(pomodoro);
 
 		$scope.remainingMinutes = function() {
 			return parseInt(pomodoro.remainingSeconds() / 60);
